@@ -1,0 +1,21 @@
+uuid: ccde8e94-8ee7-4be5-9062-9bfcbfa37f3d
+langcode: en-gb
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_music_provider
+    - node.type.ar
+  module:
+    - music_providers
+id: node.ar.field_music_provider
+field_name: field_music_provider
+entity_type: node
+bundle: ar
+label: 'Music Provider'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: music_provider

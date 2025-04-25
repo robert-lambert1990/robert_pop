@@ -1,0 +1,29 @@
+uuid: c7dca4b7-83c9-4192-a35c-16f9ca2abe50
+langcode: en-gb
+status: true
+dependencies:
+  config:
+    - field.field.node.ar.field_music_provider
+    - node.type.ar
+  module:
+    - user
+id: node.ar.default
+targetEntityType: node
+bundle: ar
+mode: default
+content:
+  field_music_provider:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

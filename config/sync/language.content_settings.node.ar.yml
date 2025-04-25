@@ -1,0 +1,11 @@
+uuid: 13676d93-dc67-4f5d-bf36-1cd79fd7886e
+langcode: en-gb
+status: true
+dependencies:
+  config:
+    - node.type.ar
+id: node.ar
+target_entity_type_id: node
+target_bundle: ar
+default_langcode: site_default
+language_alterable: false

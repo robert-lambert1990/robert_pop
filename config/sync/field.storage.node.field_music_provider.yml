@@ -1,0 +1,19 @@
+uuid: 89f681cb-18a8-4e4b-bf16-c531a5ae1b33
+langcode: en-gb
+status: true
+dependencies:
+  module:
+    - music_providers
+    - node
+id: node.field_music_provider
+field_name: field_music_provider
+entity_type: node
+type: music_provider
+settings: {  }
+module: music_providers
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
