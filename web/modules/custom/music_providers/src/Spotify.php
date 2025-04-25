@@ -57,13 +57,11 @@ final class Spotify extends MusicProvider implements MusicProviderInterface {
   }
 
   public function fetchArtistUrl($artist_id = '') {
-    if (!$artist_id) {
-      $artist_id = '1Xyo4u8uXC1ZmMpatF05PJ';
-    }
 
     $api_connection = $this->spotifyApiConnection($artist_id);
     $spotifyUrl = $api_connection['external_urls']['spotify'] ?? null;
 
     return $spotifyUrl;
+    
   }
 }

@@ -1,7 +1,10 @@
 <?php
 
+use Drupal\music_providers\Spotify;
 
 
-$music_provider_service = \Drupal::service('music_providers.service');
-$artist_url = $music_provider_service->fetchArtistUrl('1Xyo4u8uXC1ZmMpatF05PJ');
+$factory = \Drupal::service('music_providers.factory');
+$music_provider = $factory->getProvider('spotify');
+$artist_url = $music_provider->fetchArtistUrl('1Xyo4u8uXC1ZmMpatF05PJ');
+
 var_dump($artist_url);

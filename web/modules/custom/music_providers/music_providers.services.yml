@@ -3,6 +3,10 @@ services:
     class: Drupal\music_providers\Spotify
     arguments: ['@http_client', '@config.factory']
 
+  music_providers.factory:
+    class: Drupal\music_providers\Service\MusicProviderFactory
+    arguments: ['@music_providers.spotify']
+
   music_providers.service:
     class: Drupal\music_providers\Service\MusicProviderService
-    arguments: ['@music_providers.spotify']
+    arguments: ['@music_providers.factory']
