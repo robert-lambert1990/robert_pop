@@ -3,6 +3,7 @@
 namespace Drupal\music_providers;
 
 use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Url;
 
 final class Spotify extends MusicProvider {
 
@@ -65,6 +66,10 @@ final class Spotify extends MusicProvider {
     }
   }
 
+  public function generateDrupalUrl() {
+
+  }
+
   public function fetchArtistUrl(string $artist_id): ?string {
 
     if (empty($artist_id)) {
@@ -73,7 +78,32 @@ final class Spotify extends MusicProvider {
 
     }
 
+    $artist_information = $this->fetchArtistInformation($artist_id);
+
+    $url = Url::fromRoute('music_providers.artist_page', ['id' => $artist_id]);
+    $link = \Drupal\Core\Link::fromTextAndUrl($artist_information['name'], $url);
+    return $link->toString();
+
+  }
+
+  public function fetchArtistInformation(string $artist_id): ?array {
+
+    if (empty($artist_id)) {
+
+      throw new \InvalidArgumentException('Artist ID cannot be empty.');
+
+    }
+
     $api_connection = $this->spotifyApiConnection($artist_id);
-    return $api_connection['external_urls']['spotify'] ?? null;
+
+    return [
+
+      'name' => $api_connection['name'] ?? null,
+      'url' => $api_connection['external_urls']['spotify'] ?? null,
+      'id' => $api_connection['id'] ?? null,
+      'image' => $api_connection['images'][0]['url'] ?? null
+
+    ];
+
   }
 }

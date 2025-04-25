@@ -1,18 +1,18 @@
-uuid: 982091cd-67db-48fe-858a-433ef0e5312d
+uuid: 3b615352-2217-4066-a093-914503534ee6
 langcode: en-gb
 status: true
 dependencies:
   module:
+    - block_content
     - music_providers
-    - node
-id: node.field_music_provider
-field_name: field_music_provider
-entity_type: node
+id: block_content.field_music_provider_artist
+field_name: field_music_provider_artist
+entity_type: block_content
 type: music_provider
 settings: {  }
 module: music_providers
 locked: false
-cardinality: 1
+cardinality: 20
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

@@ -1,0 +1,25 @@
+uuid: d5c60d1f-7e33-49dd-a142-8208397420fe
+langcode: en-gb
+status: true
+dependencies:
+  content:
+    - 'block_content:artists:b996026c-14a4-42fa-bab0-1036f29d4a49'
+  module:
+    - block_content
+  theme:
+    - olivero
+id: olivero_allartists
+theme: olivero
+region: content
+weight: 0
+provider: null
+plugin: 'block_content:b996026c-14a4-42fa-bab0-1036f29d4a49'
+settings:
+  id: 'block_content:b996026c-14a4-42fa-bab0-1036f29d4a49'
+  label: 'All Artists'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

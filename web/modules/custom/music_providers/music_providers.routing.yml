@@ -5,3 +5,15 @@ music_providers.spotify_settings_form:
     _title: 'Spotify Settings'
   requirements:
     _permission: 'administer site configuration'
+
+music_providers.artist_page:
+  path: '/artist/{id}'
+  defaults:
+    _controller: '\Drupal\music_providers\Controller\ArtistController::viewArtist'
+    _title: 'Artist Page'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      id:
+        type: 'string'

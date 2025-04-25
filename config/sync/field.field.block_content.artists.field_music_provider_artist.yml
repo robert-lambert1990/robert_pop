@@ -1,0 +1,21 @@
+uuid: cec52ba7-3f42-4f58-8435-2a2b97b2bf61
+langcode: en-gb
+status: true
+dependencies:
+  config:
+    - block_content.type.artists
+    - field.storage.block_content.field_music_provider_artist
+  module:
+    - music_providers
+id: block_content.artists.field_music_provider_artist
+field_name: field_music_provider_artist
+entity_type: block_content
+bundle: artists
+label: 'Music Provider Artist'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: music_provider

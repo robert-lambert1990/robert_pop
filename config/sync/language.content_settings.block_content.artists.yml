@@ -1,0 +1,11 @@
+uuid: 5beb5713-fd26-41bb-b62d-1f4e6313b590
+langcode: en-gb
+status: true
+dependencies:
+  config:
+    - block_content.type.artists
+id: block_content.artists
+target_entity_type_id: block_content
+target_bundle: artists
+default_langcode: site_default
+language_alterable: false

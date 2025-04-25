@@ -18,7 +18,8 @@ use Drupal\music_providers\Service\MusicProviderFactory;
  *   }
  * )
  */
-class MusicProviderArtistUrlFormatter extends FormatterBase {
+class MusicProviderArtistUrlFormatter extends FormatterBase
+{
 
   /**
    * The music provider factory service.
@@ -47,7 +48,8 @@ class MusicProviderArtistUrlFormatter extends FormatterBase {
    * @param \Drupal\music_providers\Service\MusicProviderFactory $musicProviderFactory
    *   The music provider factory service.
    */
-  public function __construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, MusicProviderFactory $musicProviderFactory) {
+  public function __construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, MusicProviderFactory $musicProviderFactory)
+  {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->musicProviderFactory = $musicProviderFactory;
   }
@@ -55,7 +57,8 @@ class MusicProviderArtistUrlFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
+  {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -71,7 +74,8 @@ class MusicProviderArtistUrlFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode)
+  {
     $elements = [];
 
     foreach ($items as $delta => $item) {
@@ -80,12 +84,11 @@ class MusicProviderArtistUrlFormatter extends FormatterBase {
       $artist_url = $music_provider->fetchArtistUrl($item->artist_id);
 
       $elements[$delta] = [
-        '#markup' => $this->t('Artist Url: @value', [
-          '@value' => $artist_url,
-        ])
+        '#markup' => $artist_url,
       ];
-    }
 
-    return $elements;
+
+      return $elements;
+    }
   }
 }

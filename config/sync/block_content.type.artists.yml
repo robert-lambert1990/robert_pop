@@ -1,0 +1,8 @@
+uuid: 20762439-3f5d-40d7-b35b-8f1991cbe848
+langcode: en-gb
+status: true
+dependencies: {  }
+id: artists
+label: Artists
+revision: false
+description: null
