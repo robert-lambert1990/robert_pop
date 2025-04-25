@@ -3,21 +3,37 @@
 namespace Drupal\music_providers;
 
 use Drupal\music_providers\MusicProviderInterface;
+use Drupal\music_providers\MusicProvider;
 use GuzzleHttp\ClientInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
-final class Spotify implements MusicProviderInterface {
+final class Spotify extends MusicProvider implements MusicProviderInterface {
 
+  protected ClientInterface $httpClient;
+  protected ConfigFactoryInterface $configFactory;
 
+  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory) {
+    $this->httpClient = $httpClient;
+    $this->configFactory = $configFactory;
+  }
+
+  protected function getSpotifyAuth() {
+
+    $config = $this->configFactory->get('music_providers.spotify_settings');
+    $client_id = $config->get('client_id');
+    $client_secret = $config->get('client_secret');
+
+    return base64_encode("$client_id:$client_secret");
+
+  }
 
   protected function generateSpotifyAccessToken() {
-    $client = \Drupal::httpClient();
-    $config = \Drupal::config('music_providers.spotify_settings');
-    $clientId = $config->get('client_id');
-    $clientSecret = $config->get('client_secret');
 
-    $response = $client->post('https://accounts.spotify.com/api/token', [
+    $auth = $this->getSpotifyAuth();
+
+    $response = $this->httpClient->post('https://accounts.spotify.com/api/token', [
       'headers' => [
-        'Authorization' => 'Basic ' . base64_encode("$clientId:$clientSecret"),
+        'Authorization' => 'Basic ' . $auth,
         'Content-Type' => 'application/x-www-form-urlencoded',
       ],
       'form_params' => [
@@ -29,10 +45,9 @@ final class Spotify implements MusicProviderInterface {
   }
 
   protected function spotifyApiConnection($artist_id) {
-    $client = \Drupal::httpClient();
     $accessToken = $this->generateSpotifyAccessToken();
 
-    $response =  $client->get("https://api.spotify.com/v1/artists/$artist_id", [
+    $response = $this->httpClient->get("https://api.spotify.com/v1/artists/$artist_id", [
       'headers' => [
         'Authorization' => "Bearer $accessToken",
       ],
@@ -41,22 +56,14 @@ final class Spotify implements MusicProviderInterface {
     return json_decode($response->getBody(), true);
   }
 
-
-  //Need to validate the artist id is an acceptable string
-
   public function fetchArtistUrl($artist_id = '') {
-
-    //For testing
-
     if (!$artist_id) {
       $artist_id = '1Xyo4u8uXC1ZmMpatF05PJ';
     }
 
     $api_connection = $this->spotifyApiConnection($artist_id);
     $spotifyUrl = $api_connection['external_urls']['spotify'] ?? null;
-    //Return artist url from response
 
     return $spotifyUrl;
-
   }
 }
