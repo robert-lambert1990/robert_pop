@@ -1,0 +1,7 @@
+music_providers.spotify_settings_form:
+  path: '/admin/config/music-providers/spotify-settings'
+  defaults:
+    _form: '\Drupal\music_providers\Form\SpotifySettingsForm'
+    _title: 'Spotify Settings'
+  requirements:
+    _permission: 'administer site configuration'
