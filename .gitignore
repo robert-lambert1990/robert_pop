@@ -56,3 +56,5 @@ npm-debug.log*
 .env.local
 .envrc
 
+/.editorconfig
+/.gitattributes
