@@ -2,48 +2,78 @@
 
 namespace Drupal\music_providers;
 
+use GuzzleHttp\Exception\RequestException;
+
 final class Spotify extends MusicProvider {
 
-  protected function getSpotifyAuth() {
+  private const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
+  private const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
+
+  protected function getSpotifyAuth(): string {
+
     $config = $this->configFactory->get('music_providers.spotify_settings');
     $client_id = $config->get('client_id');
     $client_secret = $config->get('client_secret');
 
     return base64_encode("$client_id:$client_secret");
+
   }
 
-  protected function generateSpotifyAccessToken() {
+  protected function generateSpotifyAccessToken(): string {
+
     $auth = $this->getSpotifyAuth();
 
-    $response = $this->httpClient->post('https://accounts.spotify.com/api/token', [
-      'headers' => [
-        'Authorization' => 'Basic ' . $auth,
-        'Content-Type' => 'application/x-www-form-urlencoded',
-      ],
-      'form_params' => [
-        'grant_type' => 'client_credentials',
-      ],
-    ]);
+    try {
 
-    return json_decode($response->getBody(), true)['access_token'];
+      $response = $this->httpClient->post(self::SPOTIFY_TOKEN_URL, [
+        'headers' => [
+          'Authorization' => 'Basic ' . $auth,
+          'Content-Type' => 'application/x-www-form-urlencoded',
+        ],
+        'form_params' => [
+          'grant_type' => 'client_credentials',
+        ],
+      ]);
+
+      $data = json_decode($response->getBody(), true);
+      return $data['access_token'] ?? throw new \RuntimeException('Access token not found in response.');
+
+    } catch (RequestException $e) {
+
+      throw new \RuntimeException('Failed to generate Spotify access token: ' . $e->getMessage());
+
+    }
   }
 
-  protected function spotifyApiConnection($artist_id) {
+  protected function spotifyApiConnection(string $artist_id): array {
     $accessToken = $this->generateSpotifyAccessToken();
 
-    $response = $this->httpClient->get("https://api.spotify.com/v1/artists/$artist_id", [
-      'headers' => [
-        'Authorization' => "Bearer $accessToken",
-      ],
-    ]);
+    try {
 
-    return json_decode($response->getBody(), true);
+      $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . "/artists/$artist_id", [
+        'headers' => [
+          'Authorization' => "Bearer $accessToken",
+        ],
+      ]);
+
+      return json_decode($response->getBody(), true);
+
+    } catch (RequestException $e) {
+
+      throw new \RuntimeException('Failed to connect to Spotify API: ' . $e->getMessage());
+
+    }
   }
 
-  public function fetchArtistUrl($artist_id = '') {
-    $api_connection = $this->spotifyApiConnection($artist_id);
-    $spotifyUrl = $api_connection['external_urls']['spotify'] ?? null;
+  public function fetchArtistUrl(string $artist_id): ?string {
 
-    return $spotifyUrl;
+    if (empty($artist_id)) {
+
+      throw new \InvalidArgumentException('Artist ID cannot be empty.');
+
+    }
+
+    $api_connection = $this->spotifyApiConnection($artist_id);
+    return $api_connection['external_urls']['spotify'] ?? null;
   }
 }
