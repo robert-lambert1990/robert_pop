@@ -46,51 +46,23 @@ final class Spotify extends MusicProvider {
     }
   }
 
-  protected function spotifyApiConnection(string $artist_id): array {
+  protected function spotifyApiRequest(string $endpoint, array $query = []): array {
     $accessToken = $this->generateSpotifyAccessToken();
 
     try {
-
-      $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . "/artists/$artist_id", [
+      $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . $endpoint, [
         'headers' => [
           'Authorization' => "Bearer $accessToken",
         ],
+        'query' => $query,
       ]);
 
       return json_decode($response->getBody(), true);
 
     } catch (RequestException $e) {
-
       throw new \RuntimeException('Failed to connect to Spotify API: ' . $e->getMessage());
-
     }
   }
-
-  protected function spotifyApiConnectionName(string $artist_name): array {
-    $accessToken = $this->generateSpotifyAccessToken();
-
-    try {
-
-      $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . "/search", [
-        'headers' => [
-          'Authorization' => "Bearer $accessToken",
-        ],
-        'query' => [
-          'q' => $artist_name,
-          'type' => 'artist',
-          'limit' => 1,
-        ],
-      ]);
-
-      return json_decode($response->getBody(), true)['artists']['items'][0];
-
-    } catch (RequestException $e) {
-
-      throw new \RuntimeException('Failed to connect to Spotify API: ' . $e->getMessage());
-
-    }
-  }
-
   public function fetchArtistUrl(string $artist_id): ?string {
 
     if (empty($artist_id)) {
@@ -113,49 +85,40 @@ final class Spotify extends MusicProvider {
 
   }
 
-  public function fetchArtistInformationName(string $artist_name): ?array {
 
-    if (empty($artist_name)) {
-
-      throw new \InvalidArgumentException('Artist Name cannot be empty.');
-
-    }
-
-    //Convert name to upper case and replace dashes with spaces
-    $artist_name = str_replace('-', ' ', $artist_name);
-
-    $api_connection = $this->spotifyApiConnectionName($artist_name);
-
-    return [
-
-      'name' => $api_connection['name'] ?? null,
-      'url' => $api_connection['external_urls']['spotify'] ?? null,
-      'id' => $api_connection['id'] ?? null,
-      'image' => $api_connection['images'][0]['url'] ?? null,
-      'genres' => $api_connection['genres'] ?? null,
-
-    ];
-
-  }
   public function fetchArtistInformation(string $artist_id): ?array {
-
     if (empty($artist_id)) {
-
       throw new \InvalidArgumentException('Artist ID cannot be empty.');
-
     }
 
-    $api_connection = $this->spotifyApiConnection($artist_id);
+    $api_connection = $this->spotifyApiRequest("/artists/$artist_id");
 
     return [
-
       'name' => $api_connection['name'] ?? null,
       'url' => $api_connection['external_urls']['spotify'] ?? null,
       'id' => $api_connection['id'] ?? null,
       'image' => $api_connection['images'][0]['url'] ?? null,
       'genres' => $api_connection['genres'] ?? null,
-
     ];
+  }
+  public function fetchArtistInformationName(string $artist_name): ?array {
+    if (empty($artist_name)) {
+      throw new \InvalidArgumentException('Artist Name cannot be empty.');
+    }
 
+    $artist_name = str_replace('-', ' ', $artist_name);
+    $api_connection = $this->spotifyApiRequest("/search", [
+      'q' => $artist_name,
+      'type' => 'artist',
+      'limit' => 1,
+    ]);
+
+    return [
+      'name' => $api_connection['artists']['items'][0]['name'] ?? null,
+      'url' => $api_connection['artists']['items'][0]['external_urls']['spotify'] ?? null,
+      'id' => $api_connection['artists']['items'][0]['id'] ?? null,
+      'image' => $api_connection['artists']['items'][0]['images'][0]['url'] ?? null,
+      'genres' => $api_connection['artists']['items'][0]['genres'] ?? null,
+    ];
   }
 }
