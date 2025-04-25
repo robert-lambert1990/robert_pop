@@ -6,15 +6,22 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use GuzzleHttp\ClientInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 
 abstract class MusicProvider implements MusicProviderInterface {
 
   protected ClientInterface $httpClient;
   protected ConfigFactoryInterface $configFactory;
+  protected AccountProxyInterface $currentUser;
 
-  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory) {
+  public function __construct(
+    ClientInterface $httpClient,
+    ConfigFactoryInterface $configFactory,
+    AccountProxyInterface $currentUser
+  ) {
     $this->httpClient = $httpClient;
     $this->configFactory = $configFactory;
+    $this->currentUser = $currentUser;
   }
 
   protected function normalizeArtistData(string $name, string $url, string $id, string $image, array $genres = []): array {
@@ -28,9 +35,7 @@ abstract class MusicProvider implements MusicProviderInterface {
   }
 
   protected function generateArtistUrl(string $provider, string $artist_name): string {
-    $current_user = \Drupal::currentUser();
-
-    if (!$current_user->isAuthenticated()) {
+    if (!$this->currentUser->isAuthenticated()) {
       return $artist_name;
     }
 

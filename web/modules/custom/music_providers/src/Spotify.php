@@ -5,16 +5,14 @@ namespace Drupal\music_providers;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
-use Drupal\Core\Url;
-use Drupal\Core\Link;
-
+use Drupal\Core\Session\AccountProxyInterface;
 final class Spotify extends MusicProvider {
 
   protected $authService;
 
   private const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
-  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory, SpotifyAuthService $authService) {
-    parent::__construct($httpClient, $configFactory);
+  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, SpotifyAuthService $authService) {
+    parent::__construct($httpClient, $configFactory, $currentUser);
     $this->authService = $authService;
   }
   protected function spotifyApiRequest(string $endpoint, array $query = []): array {

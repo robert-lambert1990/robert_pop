@@ -1,7 +1,7 @@
 services:
   music_providers.spotify:
     class: Drupal\music_providers\Spotify
-    arguments: ['@http_client', '@config.factory', '@music_providers.spotify_auth']
+    arguments: ['@http_client', '@config.factory', '@current_user', '@music_providers.spotify_auth']
 
   music_providers.spotify_auth:
     class: Drupal\music_providers\SpotifyAuthService
