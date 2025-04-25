@@ -16,7 +16,7 @@ class MusicProviderService {
     return $this->musicProvider->fetchArtistUrl($artist_id);
   }
 
-  public function fetchArtistInformation($artist_id) {
-    return $this->musicProvider->fetchArtistInformation($artist_id);
+  public function fetchArtistInformation($artist_name) {
+    return $this->musicProvider->fetchArtistInformationName($artist_name);
   }
 }

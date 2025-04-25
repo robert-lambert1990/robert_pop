@@ -66,6 +66,31 @@ final class Spotify extends MusicProvider {
     }
   }
 
+  protected function spotifyApiConnectionName(string $artist_name): array {
+    $accessToken = $this->generateSpotifyAccessToken();
+
+    try {
+
+      $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . "/search", [
+        'headers' => [
+          'Authorization' => "Bearer $accessToken",
+        ],
+        'query' => [
+          'q' => $artist_name,
+          'type' => 'artist',
+          'limit' => 1,
+        ],
+      ]);
+
+      return json_decode($response->getBody(), true)['artists']['items'][0];
+
+    } catch (RequestException $e) {
+
+      throw new \RuntimeException('Failed to connect to Spotify API: ' . $e->getMessage());
+
+    }
+  }
+
   public function fetchArtistUrl(string $artist_id): ?string {
 
     if (empty($artist_id)) {
@@ -75,13 +100,43 @@ final class Spotify extends MusicProvider {
     }
 
     $artist_information = $this->fetchArtistInformation($artist_id);
+    //Convert artist name to lower case and replace spaces with dashes
+    $artist_name = strtolower(str_replace(' ', '-', $artist_information['name']));
 
-    $url = Url::fromRoute('music_providers.artist_page', ['id' => $artist_id]);
+    $url = Url::fromRoute('music_providers.artist_page', [
+      'music_provider' => 'spotify',
+      'artist_name' => $artist_name
+    ]);
+
     $link = \Drupal\Core\Link::fromTextAndUrl($artist_information['name'], $url);
     return $link->toString();
 
   }
 
+  public function fetchArtistInformationName(string $artist_name): ?array {
+
+    if (empty($artist_name)) {
+
+      throw new \InvalidArgumentException('Artist Name cannot be empty.');
+
+    }
+
+    //Convert name to upper case and replace dashes with spaces
+    $artist_name = str_replace('-', ' ', $artist_name);
+
+    $api_connection = $this->spotifyApiConnectionName($artist_name);
+
+    return [
+
+      'name' => $api_connection['name'] ?? null,
+      'url' => $api_connection['external_urls']['spotify'] ?? null,
+      'id' => $api_connection['id'] ?? null,
+      'image' => $api_connection['images'][0]['url'] ?? null,
+      'genres' => $api_connection['genres'] ?? null,
+
+    ];
+
+  }
   public function fetchArtistInformation(string $artist_id): ?array {
 
     if (empty($artist_id)) {
