@@ -78,14 +78,10 @@ final class Spotify extends MusicProvider {
     }
 
     $artist_information = $this->fetchArtistInformation($artist_id);
-    $artist_name = strtolower(str_replace(' ', '-', $artist_information['name']));
+    if (!$artist_information) {
+      return null;
+    }
 
-    $url = Url::fromRoute('music_providers.artist_page', [
-      'music_provider' => 'spotify',
-      'artist_name' => $artist_name,
-    ]);
-
-    $link = Link::fromTextAndUrl($artist_information['name'], $url);
-    return $link->toString();
+    return $this->generateArtistUrl('spotify', $artist_information['name']);
   }
 }
