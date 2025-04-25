@@ -20,7 +20,8 @@
         "drupal/core-project-message": "^11.1",
         "drupal/core-recommended": "^11.1",
         "drupal/devel": "^5.3",
-        "drush/drush": "^13.6"
+        "drush/drush": "^13.6",
+        "kint-php/kint": "^6.0"
     },
     "conflict": {
         "drupal/drupal": "*"

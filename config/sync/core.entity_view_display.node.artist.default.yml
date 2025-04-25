@@ -1,22 +1,22 @@
-uuid: c7dca4b7-83c9-4192-a35c-16f9ca2abe50
+uuid: 221849b5-e826-42f9-862f-5d6c06bf8623
 langcode: en-gb
 status: true
 dependencies:
   config:
-    - field.field.node.ar.field_music_provider
-    - node.type.ar
+    - field.field.node.artist.field_music_provider
+    - node.type.artist
   module:
+    - music_providers
     - user
-id: node.ar.default
+id: node.artist.default
 targetEntityType: node
-bundle: ar
+bundle: artist
 mode: default
 content:
   field_music_provider:
-    type: string
+    type: music_provider_artist_url
     label: above
-    settings:
-      link_to_entity: false
+    settings: {  }
     third_party_settings: {  }
     weight: 101
     region: content

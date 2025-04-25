@@ -1,16 +1,16 @@
-uuid: 5222c61a-5c4f-4220-b74c-a80978264ee5
+uuid: cf922666-d734-4c1f-a414-b3742fd09b09
 langcode: en-gb
 status: true
 dependencies:
   config:
-    - field.field.node.ar.field_music_provider
-    - node.type.ar
+    - field.field.node.artist.field_music_provider
+    - node.type.artist
   module:
     - music_providers
     - path
-id: node.ar.default
+id: node.artist.default
 targetEntityType: node
-bundle: ar
+bundle: artist
 mode: default
 content:
   created:

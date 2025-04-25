@@ -1,11 +1,11 @@
-uuid: 13676d93-dc67-4f5d-bf36-1cd79fd7886e
+uuid: 174d79eb-dfb6-484d-9947-e2b8ff26427a
 langcode: en-gb
 status: true
 dependencies:
   config:
-    - node.type.ar
-id: node.ar
+    - node.type.artist
+id: node.artist
 target_entity_type_id: node
-target_bundle: ar
+target_bundle: artist
 default_langcode: site_default
 language_alterable: false
