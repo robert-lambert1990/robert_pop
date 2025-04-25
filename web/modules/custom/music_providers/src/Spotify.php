@@ -4,6 +4,7 @@ namespace Drupal\music_providers;
 
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 final class Spotify extends MusicProvider {
 
@@ -11,21 +12,17 @@ final class Spotify extends MusicProvider {
   private const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
   protected function getSpotifyAuth(): string {
-
     $config = $this->configFactory->get('music_providers.spotify_settings');
     $client_id = $config->get('client_id');
     $client_secret = $config->get('client_secret');
 
     return base64_encode("$client_id:$client_secret");
-
   }
 
   protected function generateSpotifyAccessToken(): string {
-
     $auth = $this->getSpotifyAuth();
 
     try {
-
       $response = $this->httpClient->post(self::SPOTIFY_TOKEN_URL, [
         'headers' => [
           'Authorization' => 'Basic ' . $auth,
@@ -40,9 +37,7 @@ final class Spotify extends MusicProvider {
       return $data['access_token'] ?? throw new \RuntimeException('Access token not found in response.');
 
     } catch (RequestException $e) {
-
       throw new \RuntimeException('Failed to generate Spotify access token: ' . $e->getMessage());
-
     }
   }
 
@@ -63,62 +58,57 @@ final class Spotify extends MusicProvider {
       throw new \RuntimeException('Failed to connect to Spotify API: ' . $e->getMessage());
     }
   }
+
+  protected function fetchArtistData(string $type, string $value): ?array {
+
+    if (empty($value)) {
+      throw new \InvalidArgumentException(ucfirst($type) . ' cannot be empty.');
+    }
+
+    $endpoint = $type === 'id' ? "/artists/$value" : "/search";
+    $query = $type === 'name' ? ['q' => str_replace('-', ' ', $value), 'type' => 'artist', 'limit' => 1] : [];
+
+    $api_connection = $this->spotifyApiRequest($endpoint, $query);
+
+    $artist_data = $type === 'name'
+      ? $api_connection['artists']['items'][0] ?? null
+      : $api_connection;
+
+    if (!$artist_data) {
+      return null;
+    }
+
+    return $this->normalizeArtistData(
+      $artist_data['name'] ?? '',
+      $artist_data['external_urls']['spotify'] ?? '',
+      $artist_data['id'] ?? '',
+      $artist_data['images'][0]['url'] ?? '',
+      $artist_data['genres'] ?? []
+    );
+  }
+
+  public function fetchArtistInformation(string $artist_id): ?array {
+    return $this->fetchArtistData('id', $artist_id);
+  }
+
+  public function fetchArtistInformationName(string $artist_name): ?array {
+    return $this->fetchArtistData('name', $artist_name);
+  }
+
   public function fetchArtistUrl(string $artist_id): ?string {
-
     if (empty($artist_id)) {
-
       throw new \InvalidArgumentException('Artist ID cannot be empty.');
-
     }
 
     $artist_information = $this->fetchArtistInformation($artist_id);
-    //Convert artist name to lower case and replace spaces with dashes
     $artist_name = strtolower(str_replace(' ', '-', $artist_information['name']));
 
     $url = Url::fromRoute('music_providers.artist_page', [
       'music_provider' => 'spotify',
-      'artist_name' => $artist_name
+      'artist_name' => $artist_name,
     ]);
 
-    $link = \Drupal\Core\Link::fromTextAndUrl($artist_information['name'], $url);
+    $link = Link::fromTextAndUrl($artist_information['name'], $url);
     return $link->toString();
-
-  }
-
-
-  public function fetchArtistInformation(string $artist_id): ?array {
-    if (empty($artist_id)) {
-      throw new \InvalidArgumentException('Artist ID cannot be empty.');
-    }
-
-    $api_connection = $this->spotifyApiRequest("/artists/$artist_id");
-
-    return [
-      'name' => $api_connection['name'] ?? null,
-      'url' => $api_connection['external_urls']['spotify'] ?? null,
-      'id' => $api_connection['id'] ?? null,
-      'image' => $api_connection['images'][0]['url'] ?? null,
-      'genres' => $api_connection['genres'] ?? null,
-    ];
-  }
-  public function fetchArtistInformationName(string $artist_name): ?array {
-    if (empty($artist_name)) {
-      throw new \InvalidArgumentException('Artist Name cannot be empty.');
-    }
-
-    $artist_name = str_replace('-', ' ', $artist_name);
-    $api_connection = $this->spotifyApiRequest("/search", [
-      'q' => $artist_name,
-      'type' => 'artist',
-      'limit' => 1,
-    ]);
-
-    return [
-      'name' => $api_connection['artists']['items'][0]['name'] ?? null,
-      'url' => $api_connection['artists']['items'][0]['external_urls']['spotify'] ?? null,
-      'id' => $api_connection['artists']['items'][0]['id'] ?? null,
-      'image' => $api_connection['artists']['items'][0]['images'][0]['url'] ?? null,
-      'genres' => $api_connection['artists']['items'][0]['genres'] ?? null,
-    ];
   }
 }
