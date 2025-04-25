@@ -12,7 +12,7 @@ music_providers.artist_page:
     _controller: '\Drupal\music_providers\Controller\ArtistController::viewArtist'
     _title: 'Artist Page'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\music_providers\Access\ArtistPageAccessCheck::access'
   options:
     parameters:
       music_provider:
