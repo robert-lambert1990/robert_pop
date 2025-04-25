@@ -1,0 +1,11 @@
+<?php
+
+//Purely for testing will expand further on
+
+use Drupal\music_providers\Spotify;
+
+$spotify = New Spotify();
+$artist_url = $spotify->getArtistUrl('1Xyo4u8uXC1ZmMpatF05PJ');
+var_dump($artist_url);
+
+die();

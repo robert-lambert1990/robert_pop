@@ -1,0 +1,5 @@
+name: 'Music Providers'
+type: module
+description: 'Connect to music providers'
+package: Custom
+core_version_requirement: ^10 || ^11
