@@ -66,10 +66,6 @@ final class Spotify extends MusicProvider {
     }
   }
 
-  public function generateDrupalUrl() {
-
-  }
-
   public function fetchArtistUrl(string $artist_id): ?string {
 
     if (empty($artist_id)) {
@@ -101,7 +97,8 @@ final class Spotify extends MusicProvider {
       'name' => $api_connection['name'] ?? null,
       'url' => $api_connection['external_urls']['spotify'] ?? null,
       'id' => $api_connection['id'] ?? null,
-      'image' => $api_connection['images'][0]['url'] ?? null
+      'image' => $api_connection['images'][0]['url'] ?? null,
+      'genres' => $api_connection['genres'] ?? null,
 
     ];
 

@@ -1,0 +1,12 @@
+<div class="o-artist-page">
+  <h1>{{ artist.name }}</h1>
+  <img src="{{ artist.image }}" alt="{{ artist.name }}">
+  <a href="{{ artist.url }}" target="_blank" title="{{ artist.name }}">Spotify Url</a>
+  {% if artist.genres %}
+  <ul>
+    {% for genre in artist.genres %}
+      <li>{{ genre }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

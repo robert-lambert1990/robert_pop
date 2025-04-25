@@ -4,25 +4,33 @@ namespace Drupal\music_providers\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\music_providers\Service\MusicProviderFactory;
 
 class ArtistController extends ControllerBase {
 
-  public function viewArtist(string $id): Response {
-    // Fetch artist information using the Spotify service.
-    $spotify_service = \Drupal::service('music_providers.spotify');
-    $artist_info = $spotify_service->fetchArtistInformation($id);
+  protected $musicProviderFactory;
+  public function __construct(MusicProviderFactory $musicProviderFactory) {
 
-    if (!$artist_info) {
-      return new Response('Artist not found', 404);
-    }
+    $this->musicProviderFactory = $musicProviderFactory;
 
-    // Render artist information.
-    $output = [
+  }
+  public static function create(ContainerInterface $container): self {
+
+    return new static(
+      $container->get('music_providers.factory')
+    );
+
+  }
+  public function viewArtist(string $id): array {
+
+    $music_provider = $this->musicProviderFactory->getProvider('spotify');
+    $artist_info = $music_provider->fetchArtistInformation($id);
+
+    return [
       '#theme' => 'artist_page',
       '#artist' => $artist_info,
     ];
-
-    return $this->render($output);
   }
 
 }
