@@ -2,33 +2,17 @@
 
 namespace Drupal\music_providers;
 
-use Drupal\music_providers\MusicProviderInterface;
-use Drupal\music_providers\MusicProvider;
-use GuzzleHttp\ClientInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-
-final class Spotify extends MusicProvider implements MusicProviderInterface {
-
-  protected ClientInterface $httpClient;
-  protected ConfigFactoryInterface $configFactory;
-
-  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory) {
-    $this->httpClient = $httpClient;
-    $this->configFactory = $configFactory;
-  }
+final class Spotify extends MusicProvider {
 
   protected function getSpotifyAuth() {
-
     $config = $this->configFactory->get('music_providers.spotify_settings');
     $client_id = $config->get('client_id');
     $client_secret = $config->get('client_secret');
 
     return base64_encode("$client_id:$client_secret");
-
   }
 
   protected function generateSpotifyAccessToken() {
-
     $auth = $this->getSpotifyAuth();
 
     $response = $this->httpClient->post('https://accounts.spotify.com/api/token', [
@@ -57,11 +41,9 @@ final class Spotify extends MusicProvider implements MusicProviderInterface {
   }
 
   public function fetchArtistUrl($artist_id = '') {
-
     $api_connection = $this->spotifyApiConnection($artist_id);
     $spotifyUrl = $api_connection['external_urls']['spotify'] ?? null;
 
     return $spotifyUrl;
-    
   }
 }
