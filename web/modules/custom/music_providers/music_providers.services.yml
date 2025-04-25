@@ -1,6 +1,11 @@
+# File: modules/custom/music_providers/music_providers.services.yml
 services:
   music_providers.spotify:
     class: Drupal\music_providers\Spotify
+    arguments: ['@http_client', '@config.factory', '@music_providers.spotify_auth']
+
+  music_providers.spotify_auth:
+    class: Drupal\music_providers\SpotifyAuthService
     arguments: ['@http_client', '@config.factory']
 
   music_providers.factory:

@@ -2,47 +2,24 @@
 
 namespace Drupal\music_providers;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
 
 final class Spotify extends MusicProvider {
 
+  protected $authService;
+
   private const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
-  private const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
-
-  protected function getSpotifyAuth(): string {
-    $config = $this->configFactory->get('music_providers.spotify_settings');
-    $client_id = $config->get('client_id');
-    $client_secret = $config->get('client_secret');
-
-    return base64_encode("$client_id:$client_secret");
+  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory, SpotifyAuthService $authService) {
+    parent::__construct($httpClient, $configFactory);
+    $this->authService = $authService;
   }
-
-  protected function generateSpotifyAccessToken(): string {
-    $auth = $this->getSpotifyAuth();
-
-    try {
-      $response = $this->httpClient->post(self::SPOTIFY_TOKEN_URL, [
-        'headers' => [
-          'Authorization' => 'Basic ' . $auth,
-          'Content-Type' => 'application/x-www-form-urlencoded',
-        ],
-        'form_params' => [
-          'grant_type' => 'client_credentials',
-        ],
-      ]);
-
-      $data = json_decode($response->getBody(), true);
-      return $data['access_token'] ?? throw new \RuntimeException('Access token not found in response.');
-
-    } catch (RequestException $e) {
-      throw new \RuntimeException('Failed to generate Spotify access token: ' . $e->getMessage());
-    }
-  }
-
   protected function spotifyApiRequest(string $endpoint, array $query = []): array {
-    $accessToken = $this->generateSpotifyAccessToken();
+
+    $accessToken = $this->authService->generateAccessToken();
 
     try {
       $response = $this->httpClient->get(self::SPOTIFY_API_BASE_URL . $endpoint, [

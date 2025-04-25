@@ -88,7 +88,8 @@ class MusicProviderArtistUrlFormatter extends FormatterBase
       ];
 
 
-      return $elements;
     }
+
+    return $elements;
   }
 }
