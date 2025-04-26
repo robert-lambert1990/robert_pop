@@ -1,0 +1,13 @@
+music_providers.admin:
+  title: 'Music Provider Configuration'
+  description: 'Manage settings for music providers.'
+  route_name: system.admin_config
+  parent: system.admin_config
+  weight: 0
+
+music_providers.spotify_settings:
+  title: 'Spotify Configuration'
+  description: 'Configure Spotify settings.'
+  route_name: music_providers.spotify_settings_form
+  parent: music_providers.admin
+  weight: 0
