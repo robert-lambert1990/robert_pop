@@ -1,12 +1,18 @@
 <div class="o-artist-page">
-  <h1>{{ artist.name }}</h1>
-  <img src="{{ artist.image }}" alt="{{ artist.name }}">
-  <a href="{{ artist.url }}" target="_blank" title="{{ artist.name }}">Spotify Url</a>
-  {% if artist.genres %}
-  <ul>
-    {% for genre in artist.genres %}
-      <li>{{ genre }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+  <div class="o-artist-page__header">
+    <a href="/">Return to all Artists</a>
+  </div>
+  <div class="o-artist-page__content">
+    <h1>{{ artist.name }}</h1>
+    <img src="{{ artist.image }}" alt="{{ artist.name }}">
+    <a href="{{ artist.url }}" target="_blank" title="{{ artist.name }}">Spotify Url</a>
+    {% if artist.genres %}
+      <ul>
+        {% for genre in artist.genres %}
+          <li>{{ genre }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
 </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\music_providers;
+namespace Drupal\music_providers\Service;
 
 use GuzzleHttp\ClientInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;

@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\music_providers\Service\SpotifyAuthService;
 final class Spotify extends MusicProvider {
 
   protected $authService;
@@ -34,7 +35,7 @@ final class Spotify extends MusicProvider {
     }
   }
 
-  protected function fetchArtistData(string $type, string $value): ?array {
+  public function fetchArtistData(string $type, string $value): ?array {
 
     if (empty($value)) {
       throw new \InvalidArgumentException(ucfirst($type) . ' cannot be empty.');
@@ -62,20 +63,12 @@ final class Spotify extends MusicProvider {
     );
   }
 
-  public function fetchArtistInformation(string $artist_id): ?array {
-    return $this->fetchArtistData('id', $artist_id);
-  }
-
-  public function fetchArtistInformationName(string $artist_name): ?array {
-    return $this->fetchArtistData('name', $artist_name);
-  }
-
   public function fetchArtistUrl(string $artist_id): ?string {
     if (empty($artist_id)) {
       throw new \InvalidArgumentException('Artist ID cannot be empty.');
     }
 
-    $artist_information = $this->fetchArtistInformation($artist_id);
+    $artist_information = $this->fetchArtistData('id', $artist_id);
     if (!$artist_information) {
       return null;
     }

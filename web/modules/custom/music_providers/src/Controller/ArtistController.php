@@ -25,7 +25,7 @@ class ArtistController extends ControllerBase {
   public function viewArtist(string $music_provider, string $artist_name): array {
 
     $music_provider = $this->musicProviderFactory->getProvider($music_provider);
-    $artist_info = $music_provider->fetchArtistInformationName($artist_name);
+    $artist_info = $music_provider->fetchArtistData('name', $artist_name);
 
     return [
       '#theme' => 'artist_page',

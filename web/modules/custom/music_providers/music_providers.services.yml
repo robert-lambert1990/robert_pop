@@ -4,13 +4,9 @@ services:
     arguments: ['@http_client', '@config.factory', '@current_user', '@music_providers.spotify_auth']
 
   music_providers.spotify_auth:
-    class: Drupal\music_providers\SpotifyAuthService
+    class: Drupal\music_providers\Service\SpotifyAuthService
     arguments: ['@http_client', '@config.factory']
 
   music_providers.factory:
     class: Drupal\music_providers\Service\MusicProviderFactory
     arguments: ['@music_providers.spotify']
-
-  music_providers.service:
-    class: Drupal\music_providers\Service\MusicProviderService
-    arguments: ['@music_providers.factory']

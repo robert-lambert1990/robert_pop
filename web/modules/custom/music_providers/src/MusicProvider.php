@@ -24,6 +24,8 @@ abstract class MusicProvider implements MusicProviderInterface {
     $this->currentUser = $currentUser;
   }
 
+  abstract function fetchArtistUrl(string $artist_id): ?string;
+  abstract function fetchArtistData(string $type, string $value): ?array;
   protected function normalizeArtistData(string $name, string $url, string $id, string $image, array $genres = []): array {
     return [
       'name' => $name,
