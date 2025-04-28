@@ -6,15 +6,16 @@ use Drupal\music_providers\MusicProviderInterface;
 
 class MusicProviderFactory {
 
-  protected $spotify;
-  public function __construct(MusicProviderInterface $spotify) {
-    $this->spotify = $spotify;
+  protected MusicProviderInterface $provider;
+
+  public function __construct(MusicProviderInterface $provider) {
+    $this->provider = $provider;
   }
 
   public function getProvider(string $provider): MusicProviderInterface {
     switch ($provider) {
       case 'spotify':
-        return $this->spotify;
+        return $this->provider;
       default:
         throw new \InvalidArgumentException("Invalid music provider: $provider");
     }
