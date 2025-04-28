@@ -1,0 +1,18 @@
+name: 'Music Provider'
+type: theme
+description: 'A custom theme for music content.'
+core_version_requirement: ^11
+package: Custom
+base theme: classy
+
+libraries:
+  - music_provider/global-styling
+
+regions:
+  header: 'Header'
+  primary_menu: 'Primary Menu'
+  secondary_menu: 'Secondary Menu'
+  content: 'Content'
+  sidebar_first: 'Sidebar First'
+  sidebar_second: 'Sidebar Second'
+  footer: 'Footer'
